@@ -113,6 +113,7 @@ module Stellar
       j = {}
       @id_first.step(@id_last,@id_step) do |i|
         h = parse i
+        h["id"]=i
         j[h["name"]]=h
       end
       return j
