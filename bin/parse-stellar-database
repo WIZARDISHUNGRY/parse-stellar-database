@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+$:.unshift File.join(File.dirname(__FILE__), *%w[.. lib])
+
+require 'parse-stellar-database'
+require 'json'
+
+p = Stellar::Crawler.new
+a = p.crawl
+puts a.to_json
