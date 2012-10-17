@@ -50,7 +50,7 @@ module Stellar
         output += " " + line.content.strip
       end
       value = output.gsub(/ +/,' ').gsub(/[^\x00-\x7f]/,'').strip
-      if value == ''
+      if value == '' and line.next_sibling
         value = next_value line.next_sibling
       end
       return value
