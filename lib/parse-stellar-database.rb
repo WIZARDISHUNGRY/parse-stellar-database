@@ -92,7 +92,6 @@ module Stellar
     def initialize
       @url_base="http://www.stellar-database.com/Scripts/search_star.exe?ID="
       @id_last=224800
-      @id_last=1000
       @id_first=100
       @id_step=100
     end
@@ -108,7 +107,6 @@ module Stellar
 
     def parse(id,count=0)
       url = "#{@url_base}#{id}"
-      $stderr.puts url
       begin
         p = Stellar::Parser.new url
         return p.parse
