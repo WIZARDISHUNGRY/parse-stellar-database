@@ -29,4 +29,11 @@ class TestParseStellarDatabase < Test::Unit::TestCase
       flunk "Please warn of all black holes :) #{h['luminosity_class']}"
     end
   end
+  should "parse Bonner Durchmusterung -143.3093" do
+    p = Stellar::Parser.new 'fixtures/bonner-durchmusterun-1.-14.3093.html'
+    h = p.parse
+    if not h["heavy_element_abundance"] =~ /33/
+      flunk "heavy metal check = #{h['heavy_element_abundance']}"
+    end
+  end
 end
