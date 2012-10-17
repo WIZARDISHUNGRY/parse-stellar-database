@@ -125,8 +125,8 @@ module Stellar
         p = Stellar::Parser.new url
       rescue Exception => e
         count+=1
-        puts e.message
-        puts e.backtrace.inspect
+        $stderr.puts e.message
+        $stderr.puts e.backtrace.inspect
         if count <= 5
           sleep (count*count*8)
           return parse(id,count)
