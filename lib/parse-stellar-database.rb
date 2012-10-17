@@ -55,6 +55,7 @@ module Stellar
     def rewrite(input)
       output = {}
       companions={}
+      components={}
       input.each do |k,v|
         if v.is_a? Hash
           v = rewrite(v)
@@ -62,12 +63,20 @@ module Stellar
         if k=~ /^companion_/
           k = k.sub /^companion_/, ''
           companions[k] = v
-        elsif k =~ /names$/
+        elsif k=~ /^component_/
+          k = k.sub /^component_/, ''
+          components[k] = v
         else
           output[k]=coords k, v
         end
       end
-      output['companions']=companions
+
+      if components.size > 0
+        output['companions']=companions
+      end
+      if components.size > 0
+        output['components']=components
+      end
       return output
     end
 
@@ -77,7 +86,7 @@ module Stellar
         a=v.split /, */
       end
       if m == nil
-        if k =~ /_(names|numbers)$/
+        if k =~ /_(names|numbers|indices)$/
           return a
         else
           return v
