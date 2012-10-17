@@ -138,6 +138,7 @@ module Stellar
         return p.parse
       rescue Exception => e
         $stderr.puts "#{url} #{e.message}"
+        return {}
       end
     end
 
