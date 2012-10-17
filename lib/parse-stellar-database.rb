@@ -28,7 +28,7 @@ module Stellar
           h[subsection] = {}
         end
         k = line.content.strip.to_key_name
-        v = line.next.content.strip
+        v = next_greedy line
         if !v
           return
         end
@@ -43,28 +43,47 @@ module Stellar
       return rewrite h
     end
 
+    def next_greedy(line)
+      output = ''
+      while line.next_sibling and ['br','text','a','i'].include? line.next_sibling.name
+        line = line.next_sibling
+        output += " " + line.content.strip
+      end
+      output.gsub(/ +/,' ').gsub(/[^\x00-\x7f]/,'').strip
+    end
+
     def rewrite(input)
       output = {}
-      output['companions']={}
+      companions={}
       input.each do |k,v|
         if v.is_a? Hash
           v = rewrite(v)
         end
-        if k =~ /coordinates|velocity/
-          output[k]=coords k, v
-        elsif k=~ /^companion_/
+        if k=~ /^companion_/
           k = k.sub /^companion_/, ''
-          output['companions'][k] = v
+          companions[k] = v
+        elsif k =~ /names$/
         else
-          output[k]=v
+          output[k]=coords k, v
         end
       end
+      output['companions']=companions
       return output
     end
 
     def coords(k, v)
-      k =~ /_(\w{3})_(coordinates|velocity)/
-      Hash[$1.chars.zip(v.split /, */)]
+      m=k.match /_(\w{3})_(coordinates|velocity)/
+      if v.is_a? String
+        a=v.split /, */
+      end
+      if m == nil
+        if k =~ /_(names|numbers)$/
+          return a
+        else
+          return v
+        end
+      end
+      Hash[m[1].chars.zip a]
     end
 
   end
@@ -73,6 +92,7 @@ module Stellar
     def initialize
       @url_base="http://www.stellar-database.com/Scripts/search_star.exe?ID="
       @id_last=224800
+      @id_last=1000
       @id_first=100
       @id_step=100
     end
@@ -88,6 +108,7 @@ module Stellar
 
     def parse(id,count=0)
       url = "#{@url_base}#{id}"
+      $stderr.puts url
       begin
         p = Stellar::Parser.new url
         return p.parse
