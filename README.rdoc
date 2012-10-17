@@ -2,6 +2,8 @@
 
 Ever wanted to have the entire {Internet Stellar Database}[http://www.stellar-database.com/] as a JSON blob? Now you can! I wanted to get coordinates for stars near Sol.
 
+{Here's an example of what this will output.}[https://gist.github.com/3903825]
+
 == Todo
 
 * This is probably not a good Ruby program.
