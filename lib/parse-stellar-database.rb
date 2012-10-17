@@ -5,9 +5,9 @@ require "sanitize"
 
 class String
   def to_key_name
-    downcase!
-    gsub!(' ','_')
-    gsub!(/\W/,'')
+    downcase.
+    gsub(' ','_').
+    gsub(/\W/,'')
   end
 end
 
@@ -22,13 +22,13 @@ module Stellar
       h = {}
       subsection = nil
       h["name"] = @doc.css("h1").first.content
-      @doc.css("body b").each do |line|
+      @doc.css("br + b").each do |line|
         if u = line.css("u").first
           subsection = u.content.strip.to_key_name
           h[subsection] = {}
         end
         k = line.content.strip.to_key_name
-        v = next_greedy line
+        v = next_value line
         if !v
           return
         end
@@ -43,13 +43,17 @@ module Stellar
       return rewrite h
     end
 
-    def next_greedy(line)
+    def next_value(line)
       output = ''
-      while line.next_sibling and ['br','text','a','i'].include? line.next_sibling.name
+      while line.next_sibling and not line.content =~ /\n/
         line = line.next_sibling
         output += " " + line.content.strip
       end
-      output.gsub(/ +/,' ').gsub(/[^\x00-\x7f]/,'').strip
+      value = output.gsub(/ +/,' ').gsub(/[^\x00-\x7f]/,'').strip
+      if value == ''
+        value = next_value line.next_sibling
+      end
+      return value
     end
 
     def rewrite(input)
@@ -71,7 +75,7 @@ module Stellar
         end
       end
 
-      if components.size > 0
+      if companions.size > 0
         output['companions']=companions
       end
       if components.size > 0
@@ -118,7 +122,6 @@ module Stellar
       url = "#{@url_base}#{id}"
       begin
         p = Stellar::Parser.new url
-        return p.parse
       rescue Exception => e
         count+=1
         puts e.message
@@ -129,6 +132,11 @@ module Stellar
         else
           raise e
         end
+      end
+      begin
+        return p.parse
+      rescue Exception => e
+        $stderr.puts "#{url} #{e.message}"
       end
     end
 
