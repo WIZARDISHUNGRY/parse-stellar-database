@@ -11,10 +11,7 @@ Ever wanted to have the entire {Internet Stellar Database}[http://www.stellar-da
 * Test coverage is lacking.
 * Crawl error retries are non-specific.
 * People shouldn't crawl others' sites like this too often.
-* Planetary bodies aren't parsed.
 * Key names are banal.
-* Coordinares should be exploded into individual components.
-* We should commit a test blob to the repository.
 
 == Contributing to parse-stellar-database
  
